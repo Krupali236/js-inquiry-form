@@ -33,7 +33,6 @@ function displayData() {
         </tr>
         `)
     document.getElementById('tableData').innerHTML = displayTableData.join("");
-    // console.log('displayTableData : ' + displayTableData);
     savelocalStorage();
 }
 let data = {};
@@ -47,7 +46,6 @@ function inputChange(name, value) {
 }
 
 function handleValidation(fname, lname, email, address) {
-    // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const emailRegex = /^(.+)@(.+)$/; //^([\w\.\-_]+)?\w+@[\w-_]+(\.\w+){1,}$
     const alpabetRegex = /^[a-zA-Z]+$/;
     const alphaNumericRegex = /^[a-zA-Z0-9]+$/;
@@ -90,7 +88,6 @@ function handleValidation(fname, lname, email, address) {
 
 function handleSubmit() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    // const alpabetRegex = /^[a-zA-Z]+$/g;
     const alpabetRegex = /^[a-zA-Z]+$/;
     const alphaNumericRegex = /^[a-zA-Z0-9]+$/g;
     if (isEdited) {
