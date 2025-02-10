@@ -39,6 +39,7 @@ let data = {};
 let isEdited = false;
 let changedIndex = null;
 
+
 function inputChange(name, value) {
     data[name] = value;
     console.log(value);
@@ -46,99 +47,91 @@ function inputChange(name, value) {
 }
 
 function handleValidation(fname, lname, email, address) {
-    const emailRegex = /^(.+)@(.+)$/; //^([\w\.\-_]+)?\w+@[\w-_]+(\.\w+){1,}$
-    const alpabetRegex = /^[a-zA-Z]+$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Standard email validation
+    const alphabetRegex = /^[a-zA-Z]+$/;
     const alphaNumericRegex = /^[a-zA-Z0-9]+$/;
+    let isValidation = true;
 
-    if (!alpabetRegex.test(fname)) {
-        alert("First Name Should be Alphabetical");
-        return false;
+    // First Name Validation
+    if (!alphabetRegex.test(fname)) {
+        isValidation = false;
+        document.getElementById("fname").style.borderColor = "red";
+        document.getElementById("fname-error").innerHTML = "Please enter a valid first name.";
+    } else {
+        document.getElementById("fname").style.borderColor = "";
+        document.getElementById("fname-error").innerHTML = "";
     }
-    if (!alpabetRegex.test(lname)) {
-        alert("Last Name Should be Alphabetical");
-        return false;
+
+    // Last Name Validation
+    if (!alphabetRegex.test(lname)) {
+        isValidation = false;
+        document.getElementById("lname").style.borderColor = "red";
+        document.getElementById("lname-error").innerHTML = "Please enter a valid last name.";
+    } else {
+        document.getElementById("lname").style.borderColor = "";
+        document.getElementById("lname-error").innerHTML = "";
     }
+
+    // Address Validation
     if (!alphaNumericRegex.test(address)) {
-        alert("Address Allows Only AlphaNumeric Values");
-        return false;
+        isValidation = false;
+        document.getElementById("address").style.borderColor = "red";
+        document.getElementById("address-error").innerHTML = "Please enter a valid address.";
+    } else {
+        document.getElementById("address").style.borderColor = "";
+        document.getElementById("address-error").innerHTML = "";
     }
+
+    // Email Validation
     if (!emailRegex.test(email)) {
-        alert("Please enter a valid email address.");
-        return false;
+        isValidation = false;
+        document.getElementById("email").style.borderColor = "red";
+        document.getElementById("email-error").innerHTML = "Please enter a valid email address.";
+    } else {
+        document.getElementById("email").style.borderColor = "";
+        document.getElementById("email-error").innerHTML = "";
     }
 
-    if (!alpabetRegex.test(data.fname)) {
-        alert("First Name Should be Alphabetical");
-        return false;
-    }
-    if (!alpabetRegex.test(data.lname)) {
-        alert("Last Name Should be Alphabetical");
-        return false;
-    }
-    if (!alphaNumericRegex.test(data.address)) {
-        alert("Address Allows Only AlphaNumeric Values");
-        return false;
-    }
-    if (!emailRegex.test(data.email)) {
-        alert("Please enter a valid email address.");
-        return false;
-    }
-    return true;
+    return isValidation; // Return the overall validation result
+
 }
-
 function handleSubmit() {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const alpabetRegex = /^[a-zA-Z]+$/;
-    const alphaNumericRegex = /^[a-zA-Z0-9]+$/g;
-    if (isEdited) {
-        const id = formData[changedIndex].id;
-        const fname = document.getElementById("fname").value;
-        const lname = document.getElementById("lname").value;
-        const email = document.getElementById("email").value;
-        const address = document.getElementById("address").value;
-        console.log(formData[changedIndex], "Original object before update");
-        const updateObj = { id, fname, lname, email, address }
-        if (!updateObj.id || !updateObj.fname || !updateObj.lname || !updateObj.email || !updateObj.address) {
-            alert("All fields are required. Please fill out the form completely.");
-            return;
-        }
-        const isValidate = handleValidation(fname, lname, email, address);
-
-        if (!isValidate) {
-            return;
-        }
-
-        formData[changedIndex] = updateObj;
-        console.log(updateObj, "upadte obj");
-        console.log(formData[changedIndex], "formdata");
-        isEdited = false;
-        savelocalStorage();
-        displayData();
-        handleClearInput();
-        return;
-    }
-
-    if (!data.fname || !data.lname || !data.email || !data.address) {
-        alert("All fields are required. Please fill out the form completely.");
-        return;
-    }
-
-    const isValidate = handleValidation(data.fname, data.lname, data.email, data.address);
+    const fname = document.getElementById("fname").value.trim();
+    const lname = document.getElementById("lname").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const address = document.getElementById("address").value.trim();
+    console.log(fname + " " + lname + " " + email + " " + address);
+    // Perform validation
+    const isValidate = handleValidation(fname, lname, email, address);
     if (!isValidate) {
-        return;
-    }
-    const formObject = {
-        id: GenerateRandomId(8),
-        isActive: true,
-        ...data
+        return; // Exit if validation fails
     }
 
-    console.log(formObject, "formObject");
-    formData.push(formObject);
+    if (isEdited) {
+        // Update existing data
+        const id = formData[changedIndex].id;
+        const updateObj = { id, fname, lname, email, address };
+        formData[changedIndex] = updateObj;
+        isEdited = false;
+        changedIndex = null;
+    } else {
+        // Add new data
+        const formObject = {
+            id: GenerateRandomId(8),
+            isActive: true,
+            fname,
+            lname,
+            email,
+            address
+        };
+        formData.push(formObject);
+    }
+
+    // Save and refresh table
     savelocalStorage();
     displayData();
     handleClearInput();
-    data = {}
+    data = {}; // Clear temporary data
 }
 
 function handleDeleteBtn(index) {
